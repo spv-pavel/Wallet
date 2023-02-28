@@ -17,16 +17,26 @@ class Wallet(ABC):
             self.balance += value
 
 
-class CreditCard(Wallet):
-    def __init__(self, name, limit=-1000):
-        self.limit = limit
-        super().__init__(name)
-
+class CreditBalance:
     def change_balance(self, value: int):
         if self.balance + value < self.limit:
             print(f'Not enough balance {self.balance}')
         else:
             self.balance += value
+
+
+class ProBalance:
+    def change_balance(self, value: int):
+        if self.balance + value * 0.95 < 0:
+            print(f'Not enough balance {self.balance}')
+        else:
+            self.balance += value * 0.95 if self.balance + value * 0.95 < self.balance else value
+
+
+class CreditCard(CreditBalance, Wallet):
+    def __init__(self, name, limit=-1000):
+        self.limit = limit
+        super().__init__(name)
 
 
 class Card(Wallet):
@@ -43,27 +53,16 @@ class Card(Wallet):
             return _card
 
 
-class ProCard(Wallet):
+class ProCard(ProBalance, Wallet):
     def __init__(self, name, _type='PRO'):
         super().__init__(name, _type)
 
-    def change_balance(self, value: int):
-        if self.balance + value * 0.95 < 0:
-            print(f'Not enough balance {self.balance}')
-        else:
-            self.balance += value * 0.95 if self.balance + value * 0.95 < self.balance else value
 
-
-card = Card('Sam')
+card = ProCard('Sam')
 print(card.get_balance())
 card.change_balance(1000)
 print(card.get_balance())
 card.change_balance(-800)
 print(card.get_balance())
-card.change_balance(-300)
-print(card.get_balance())
-print(card.type)
-card = card.change_card()
-print(card.type)
-card.change_balance(-100)
+card.change_balance(-250)
 print(card.get_balance())
